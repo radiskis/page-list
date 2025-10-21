@@ -3,13 +3,13 @@
 Plugin Name: Page-list
 Plugin URI: http://wordpress.org/plugins/page-list/
 Description: [pagelist], [subpages], [siblings] and [pagelist_ext] shortcodes
-Version: 5.7
+Version: 5.9
 Author: webvitaly
 Author URI: http://web-profile.net/wordpress/plugins/
 License: GPLv3
 */
 
-define('PAGE_LIST_PLUGIN_VERSION', '5.7');
+define('PAGE_LIST_PLUGIN_VERSION', '5.9');
 
 $pagelist_unq_settings = array(
 	'version' => PAGE_LIST_PLUGIN_VERSION,
@@ -60,7 +60,7 @@ if ( !function_exists('pagelist_unqprfx_shortcode') ) {
 			'exclude'      => pagelist_unqprfx_norm_params($exclude),
 			'exclude_tree' => pagelist_unqprfx_norm_params($exclude_tree),
 			'include'      => pagelist_unqprfx_norm_params($include),
-			'title_li'     => $title_li,
+			'title_li'     => esc_html($title_li),
 			'number'       => $number,
 			'offset'       => $offset,
 			'meta_key'     => $meta_key,
@@ -69,18 +69,18 @@ if ( !function_exists('pagelist_unqprfx_shortcode') ) {
 			'date_format'  => $date_format,
 			'echo'         => 0,
 			'authors'      => $authors,
-			'sort_column'  => $sort_column,
-			'sort_order'   => $sort_order,
-			'link_before'  => $link_before,
-			'link_after'   => $link_after,
-			'post_type'    => $post_type,
-			'post_status'  => $post_status
-		);
-		$list_pages = wp_list_pages( $page_list_args );
+		'sort_column'  => $sort_column,
+		'sort_order'   => $sort_order,
+		'link_before'  => esc_html($link_before),
+		'link_after'   => esc_html($link_after),
+		'post_type'    => $post_type,
+		'post_status'  => $post_status
+	);
+	$list_pages = wp_list_pages( $page_list_args );
 
-		$return .= $pagelist_unq_settings['powered_by'];
-		if ($list_pages) {
-			$return .= '<ul class="page-list '.esc_attr($class).'">'."\n".$list_pages."\n".'</ul>';
+	$return .= $pagelist_unq_settings['powered_by'];
+	if ($list_pages) {
+		$return .= '<ul class="page-list '.esc_attr($class).'">'."\n".$list_pages."\n".'</ul>';
 		} else {
 			$return .= '<!-- no pages to show -->';
 		}
@@ -105,7 +105,7 @@ if ( !function_exists('subpages_unqprfx_shortcode') ) {
 			'exclude'      => pagelist_unqprfx_norm_params($exclude),
 			'exclude_tree' => pagelist_unqprfx_norm_params($exclude_tree),
 			'include'      => pagelist_unqprfx_norm_params($include),
-			'title_li'     => $title_li,
+			'title_li'     => esc_html($title_li),
 			'number'       => $number,
 			'offset'       => $offset,
 			'meta_key'     => $meta_key,
@@ -116,8 +116,8 @@ if ( !function_exists('subpages_unqprfx_shortcode') ) {
 			'authors'      => $authors,
 			'sort_column'  => $sort_column,
 			'sort_order'   => $sort_order,
-			'link_before'  => $link_before,
-			'link_after'   => $link_after,
+			'link_before'  => esc_html($link_before),
+			'link_after'   => esc_html($link_after),
 			'post_type'    => $post_type,
 			'post_status'  => $post_status
 		);
@@ -152,7 +152,7 @@ if ( !function_exists('siblings_unqprfx_shortcode') ) {
 			'exclude'      => pagelist_unqprfx_norm_params($exclude),
 			'exclude_tree' => pagelist_unqprfx_norm_params($exclude_tree),
 			'include'      => pagelist_unqprfx_norm_params($include),
-			'title_li'     => $title_li,
+			'title_li'     => esc_html($title_li),
 			'number'       => $number,
 			'offset'       => $offset,
 			'meta_key'     => $meta_key,
@@ -163,8 +163,8 @@ if ( !function_exists('siblings_unqprfx_shortcode') ) {
 			'authors'      => $authors,
 			'sort_column'  => $sort_column,
 			'sort_order'   => $sort_order,
-			'link_before'  => $link_before,
-			'link_after'   => $link_after,
+			'link_before'  => esc_html($link_before),
+			'link_after'   => esc_html($link_after),
 			'post_type'    => $post_type,
 			'post_status'  => $post_status
 		);
@@ -326,7 +326,7 @@ if ( !function_exists('pagelist_unqprfx_ext_shortcode') ) {
 
 								$image = wp_get_attachment_image_src( get_post_thumbnail_id( $page->ID ), array($image_width,$image_height) ); // get featured img; 'large'
 								$img_url = $image[0]; // get the src of the featured image
-								$list_pages_html .= '<img src="'.$img_url.'" width="'.esc_attr($image_width).'" alt="'.esc_attr($page->post_title).'" />'; // not using height="'.$image_height.'" because images could be not square shaped and they will be stretched
+								$list_pages_html .= '<img src="'.esc_url($img_url).'" width="'.esc_attr($image_width).'" alt="'.esc_attr($page->post_title).'" />'; // not using height="'.$image_height.'" because images could be not square shaped and they will be stretched
 
 								$list_pages_html .= '</a></div> ';
 							} else {
@@ -334,7 +334,7 @@ if ( !function_exists('pagelist_unqprfx_ext_shortcode') ) {
 									$img_scr = pagelist_unqprfx_get_first_image( $page->post_content );
 									if ( !empty( $img_scr ) ) {
 										$list_pages_html .= '<div class="page-list-ext-image"><a href="'.$link.'" title="'.esc_attr($page->post_title).'">';
-										$list_pages_html .= '<img src="'.$img_scr.'" width="'.esc_attr($image_width).'" alt="'.esc_attr($page->post_title).'" />'; // not using height="'.$image_height.'" because images could be not square shaped and they will be stretched
+										$list_pages_html .= '<img src="'.esc_url($img_scr).'" width="'.esc_attr($image_width).'" alt="'.esc_attr($page->post_title).'" />'; // not using height="'.$image_height.'" because images could be not square shaped and they will be stretched
 										$list_pages_html .= '</a></div> ';
 									}
 								}
@@ -343,7 +343,7 @@ if ( !function_exists('pagelist_unqprfx_ext_shortcode') ) {
 
 
 						if ( $show_title == 1 ) {
-							$list_pages_html .= '<h3 class="page-list-ext-title"><a href="'.$link.'" title="'.esc_attr($page->post_title).'">'.$page->post_title.'</a></h3>';
+							$list_pages_html .= '<h3 class="page-list-ext-title"><a href="'.$link.'" title="'.esc_attr($page->post_title).'">'.esc_html($page->post_title).'</a></h3>';
 						}
 						if ( $show_content == 1 ) {
 							//$content = apply_filters('the_content', $page->post_content);
@@ -374,10 +374,10 @@ if ( !function_exists('pagelist_unqprfx_ext_shortcode') ) {
 							if ( $count_subpages > 0 ) { // hide empty
 								$child_count_pos = strpos($child_count_template, '%child_count%'); // check if we have %child_count% marker in template
 								if ($child_count_pos === false) { // %child_count% not found in template
-									$child_count_template_html = $child_count_template.' '.$count_subpages;
+									$child_count_template_html = esc_html($child_count_template).' '.$count_subpages;
 									$list_pages_html .= '<div class="page-list-ext-child-count">'.$child_count_template_html.'</div>';
 								} else { // %child_count% found in template
-									$child_count_template_html = str_replace('%child_count%', $count_subpages, $child_count_template);
+									$child_count_template_html = str_replace('%child_count%', $count_subpages, esc_html($child_count_template));
 									$list_pages_html .= '<div class="page-list-ext-child-count">'.$child_count_template_html.'</div>';
 								}
 							}
@@ -387,10 +387,10 @@ if ( !function_exists('pagelist_unqprfx_ext_shortcode') ) {
 							if ( !empty($post_meta) ) { // hide empty
 								$meta_pos = strpos($meta_template, '%meta%'); // check if we have %meta% marker in template
 								if ($meta_pos === false) { // %meta% not found in template
-									$meta_template_html = $meta_template.' '.$post_meta;
+									$meta_template_html = esc_html($meta_template).' '.esc_html($post_meta);
 									$list_pages_html .= '<div class="page-list-ext-meta">'.$meta_template_html.'</div>';
 								} else { // %meta% found in template
-									$meta_template_html = str_replace('%meta%', $post_meta, $meta_template);
+									$meta_template_html = str_replace('%meta%', esc_html($post_meta), esc_html($meta_template));
 									$list_pages_html .= '<div class="page-list-ext-meta">'.$meta_template_html.'</div>';
 								}
 							}
