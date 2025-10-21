@@ -171,9 +171,9 @@ if ( !function_exists('siblings_unqprfx_shortcode') ) {
 		$list_pages = wp_list_pages( $page_list_args );
 
 		$return .= $pagelist_unq_settings['powered_by'];
-		if (!( !empty( $offset ) && is_numeric( $offset ) && $offset_count > $offset & $post->post_parent) 
-		    && (!empty( $has_parent ) && is_numeric( $has_parent ) && ($has_parent==-1 | ($has_parent==0 && !$post->post_parent) | ($has_parent==1 && $post->post_parent)) )
-		    && $list_pages) {
+		if ($list_pages && !(is_numeric( $offset ) && $offset_count > $offset && $post->post_parent) 
+		    && (is_numeric( $has_parent ) && ($has_parent==-1 || ($has_parent==0 && !$post->post_parent) || ($has_parent==1 && $post->post_parent)) )
+		     ) {
 			$return .= '<ul class="page-list siblings-page-list '.esc_attr($class).'">'."\n".$list_pages."\n".'</ul>';
 		} else {
 			$return .= '<!-- no pages to show -->';
